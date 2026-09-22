@@ -142,9 +142,7 @@ npx tsc --init
     "skipLibCheck": true
   },
 
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
 ```
 
@@ -206,18 +204,18 @@ src/server.ts
 import Fastify from "fastify";
 
 const app = Fastify({
-  logger: true
+  logger: true,
 });
 
 app.get("/", async () => {
   return {
-    message: "Hello Fastify"
+    message: "Hello Fastify",
   };
 });
 
 await app.listen({
   port: 3000,
-  host: "0.0.0.0"
+  host: "0.0.0.0",
 });
 ```
 
@@ -254,7 +252,7 @@ curl http://localhost:3000
 ```typescript
 app.get("/", async () => {
   return {
-    message: "Hello Fastify"
+    message: "Hello Fastify",
   };
 });
 ```
@@ -282,10 +280,10 @@ app.MapGet("/", () => ...)
 Fastifyでは、
 
 ```typescript
-app.get()
-app.post()
-app.put()
-app.delete()
+app.get();
+app.post();
+app.put();
+app.delete();
 ```
 
 のようにHTTP Methodごとに定義します。
@@ -338,7 +336,7 @@ import { z } from "zod";
 
 const UserSchema = z.object({
   name: z.string(),
-  email: z.email()
+  email: z.email(),
 });
 ```
 
@@ -356,15 +354,14 @@ Zodの大きな利点の一つです。
 const UserSchema = z.object({
   id: z.number(),
   name: z.string(),
-  email: z.email()
+  email: z.email(),
 });
 ```
 
 このSchemaから、
 
 ```typescript
-type User =
-  z.infer<typeof UserSchema>;
+type User = z.infer<typeof UserSchema>;
 ```
 
 とできます。
@@ -411,7 +408,7 @@ type User = {
 ```typescript
 const UserSchema = z.object({
   id: z.number(),
-  name: z.string()
+  name: z.string(),
 });
 ```
 
@@ -467,35 +464,28 @@ import Fastify from "fastify";
 import {
   serializerCompiler,
   validatorCompiler,
-  type ZodTypeProvider
+  type ZodTypeProvider,
 } from "@fastify/type-provider-zod";
 
 export function buildApp() {
-
   const app = Fastify({
-    logger: true
+    logger: true,
   });
 
-  app.setValidatorCompiler(
-    validatorCompiler
-  );
+  app.setValidatorCompiler(validatorCompiler);
 
-  app.setSerializerCompiler(
-    serializerCompiler
-  );
+  app.setSerializerCompiler(serializerCompiler);
 
-  return app.withTypeProvider<
-    ZodTypeProvider
-  >();
+  return app.withTypeProvider<ZodTypeProvider>();
 }
 ```
 
 Fastifyの公式ドキュメントでも、
 
 ```typescript
-setValidatorCompiler()
-setSerializerCompiler()
-withTypeProvider()
+setValidatorCompiler();
+setSerializerCompiler();
+withTypeProvider();
 ```
 
 という組み合わせが案内されています。
@@ -511,13 +501,13 @@ const app = buildApp();
 
 app.get("/", async () => {
   return {
-    message: "Hello Fastify"
+    message: "Hello Fastify",
   };
 });
 
 await app.listen({
   port: 3000,
-  host: "0.0.0.0"
+  host: "0.0.0.0",
 });
 ```
 
@@ -547,26 +537,20 @@ src/users/user.schema.ts
 import { z } from "zod";
 
 export const UserSchema = z.object({
-
   id: z.number().int().positive(),
 
-  name: z
-    .string()
-    .min(1)
-    .max(100),
+  name: z.string().min(1).max(100),
 
-  email: z.email()
-
+  email: z.email(),
 });
 
-export type User =
-  z.infer<typeof UserSchema>;
+export type User = z.infer<typeof UserSchema>;
 ```
 
 ここで、
 
 ```typescript
-z.number()
+z.number();
 ```
 
 だけではなく、
@@ -603,13 +587,11 @@ id
 はサーバー側で採番するので不要です。
 
 ```typescript
-export const CreateUserSchema =
-  UserSchema.omit({
-    id: true
-  });
+export const CreateUserSchema = UserSchema.omit({
+  id: true,
+});
 
-export type CreateUser =
-  z.infer<typeof CreateUserSchema>;
+export type CreateUser = z.infer<typeof CreateUserSchema>;
 ```
 
 これは概念的には、
@@ -626,7 +608,7 @@ type CreateUser = {
 前回学習した、
 
 ```typescript
-Omit<User, "id">
+Omit<User, "id">;
 ```
 
 にかなり近いですが、
@@ -640,11 +622,9 @@ Zod Schema自体も変更できるところがポイントです。
 更新用も作ります。
 
 ```typescript
-export const UpdateUserSchema =
-  CreateUserSchema.partial();
+export const UpdateUserSchema = CreateUserSchema.partial();
 
-export type UpdateUser =
-  z.infer<typeof UpdateUserSchema>;
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 ```
 
 これで、
@@ -661,7 +641,7 @@ type UpdateUser = {
 TypeScriptの、
 
 ```typescript
-Partial<T>
+Partial<T>;
 ```
 
 と同じ考え方です。
@@ -681,19 +661,15 @@ Partial<T>
 も検証します。
 
 ```typescript
-export const UserParamsSchema =
-  z.object({
-    id: z.coerce
-      .number()
-      .int()
-      .positive()
-  });
+export const UserParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
 ```
 
 ポイントは、
 
 ```typescript
-z.coerce.number()
+z.coerce.number();
 ```
 
 です。
@@ -726,43 +702,28 @@ HTTP URLから来る値は、
 import { z } from "zod";
 
 export const UserSchema = z.object({
+  id: z.number().int().positive(),
 
-  id: z.number()
-    .int()
-    .positive(),
+  name: z.string().min(1).max(100),
 
-  name: z.string()
-    .min(1)
-    .max(100),
-
-  email: z.email()
-
+  email: z.email(),
 });
 
-export const CreateUserSchema =
-  UserSchema.omit({
-    id: true
-  });
+export const CreateUserSchema = UserSchema.omit({
+  id: true,
+});
 
-export const UpdateUserSchema =
-  CreateUserSchema.partial();
+export const UpdateUserSchema = CreateUserSchema.partial();
 
-export const UserParamsSchema =
-  z.object({
-    id: z.coerce
-      .number()
-      .int()
-      .positive()
-  });
+export const UserParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
 
-export type User =
-  z.infer<typeof UserSchema>;
+export type User = z.infer<typeof UserSchema>;
 
-export type CreateUser =
-  z.infer<typeof CreateUserSchema>;
+export type CreateUser = z.infer<typeof CreateUserSchema>;
 
-export type UpdateUser =
-  z.infer<typeof UpdateUserSchema>;
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 ```
 
 ---
@@ -778,23 +739,19 @@ src/users/user.repository.ts
 ```
 
 ```typescript
-import type {
-  CreateUser,
-  UpdateUser,
-  User
-} from "./user.schema.js";
+import type { CreateUser, UpdateUser, User } from "./user.schema.js";
 
 const users: User[] = [
   {
     id: 1,
     name: "Alice",
-    email: "alice@example.com"
+    email: "alice@example.com",
   },
   {
     id: 2,
     name: "Bob",
-    email: "bob@example.com"
-  }
+    email: "bob@example.com",
+  },
 ];
 
 let nextId = 3;
@@ -803,9 +760,7 @@ let nextId = 3;
 一覧取得：
 
 ```typescript
-export async function findAllUsers():
-  Promise<User[]> {
-
+export async function findAllUsers(): Promise<User[]> {
   return users;
 }
 ```
@@ -815,20 +770,15 @@ export async function findAllUsers():
 # 19. findById
 
 ```typescript
-export async function findUserById(
-  id: number
-): Promise<User | undefined> {
-
-  return users.find(
-    user => user.id === id
-  );
+export async function findUserById(id: number): Promise<User | undefined> {
+  return users.find((user) => user.id === id);
 }
 ```
 
 ここで、
 
 ```typescript
-User | undefined
+User | undefined;
 ```
 
 になっています。
@@ -840,13 +790,10 @@ User | undefined
 # 20. create
 
 ```typescript
-export async function createUser(
-  input: CreateUser
-): Promise<User> {
-
+export async function createUser(input: CreateUser): Promise<User> {
   const user: User = {
     id: nextId++,
-    ...input
+    ...input,
   };
 
   users.push(user);
@@ -868,7 +815,7 @@ export async function createUser(
 ```typescript
 const input = {
   name: "Charlie",
-  email: "charlie@example.com"
+  email: "charlie@example.com",
 };
 ```
 
@@ -877,7 +824,7 @@ const input = {
 ```typescript
 const user = {
   id: 3,
-  ...input
+  ...input,
 };
 ```
 
@@ -902,13 +849,9 @@ const user = {
 ```typescript
 export async function updateUser(
   id: number,
-  input: UpdateUser
+  input: UpdateUser,
 ): Promise<User | undefined> {
-
-  const user =
-    users.find(
-      user => user.id === id
-    );
+  const user = users.find((user) => user.id === id);
 
   if (!user) {
     return undefined;
@@ -939,14 +882,8 @@ if (input.name !== undefined)
 # 22. delete
 
 ```typescript
-export async function deleteUser(
-  id: number
-): Promise<boolean> {
-
-  const index =
-    users.findIndex(
-      user => user.id === id
-    );
+export async function deleteUser(id: number): Promise<boolean> {
+  const index = users.findIndex((user) => user.id === id);
 
   if (index === -1) {
     return false;
@@ -963,49 +900,35 @@ export async function deleteUser(
 # 23. Repository完成版
 
 ```typescript
-import type {
-  CreateUser,
-  UpdateUser,
-  User
-} from "./user.schema.js";
+import type { CreateUser, UpdateUser, User } from "./user.schema.js";
 
 const users: User[] = [
   {
     id: 1,
     name: "Alice",
-    email: "alice@example.com"
+    email: "alice@example.com",
   },
   {
     id: 2,
     name: "Bob",
-    email: "bob@example.com"
-  }
+    email: "bob@example.com",
+  },
 ];
 
 let nextId = 3;
 
-export async function findAllUsers():
-  Promise<User[]> {
-
+export async function findAllUsers(): Promise<User[]> {
   return users;
 }
 
-export async function findUserById(
-  id: number
-): Promise<User | undefined> {
-
-  return users.find(
-    user => user.id === id
-  );
+export async function findUserById(id: number): Promise<User | undefined> {
+  return users.find((user) => user.id === id);
 }
 
-export async function createUser(
-  input: CreateUser
-): Promise<User> {
-
+export async function createUser(input: CreateUser): Promise<User> {
   const user: User = {
     id: nextId++,
-    ...input
+    ...input,
   };
 
   users.push(user);
@@ -1015,13 +938,9 @@ export async function createUser(
 
 export async function updateUser(
   id: number,
-  input: UpdateUser
+  input: UpdateUser,
 ): Promise<User | undefined> {
-
-  const user =
-    users.find(
-      user => user.id === id
-    );
+  const user = users.find((user) => user.id === id);
 
   if (!user) {
     return undefined;
@@ -1038,14 +957,8 @@ export async function updateUser(
   return user;
 }
 
-export async function deleteUser(
-  id: number
-): Promise<boolean> {
-
-  const index =
-    users.findIndex(
-      user => user.id === id
-    );
+export async function deleteUser(id: number): Promise<boolean> {
+  const index = users.findIndex((user) => user.id === id);
 
   if (index === -1) {
     return false;
@@ -1096,52 +1009,36 @@ src/users/user.service.ts
 ```
 
 ```typescript
-import type {
-  CreateUser,
-  UpdateUser,
-  User
-} from "./user.schema.js";
+import type { CreateUser, UpdateUser, User } from "./user.schema.js";
 
 import {
   createUser,
   deleteUser,
   findAllUsers,
   findUserById,
-  updateUser
+  updateUser,
 } from "./user.repository.js";
 
-export async function getUsers():
-  Promise<User[]> {
-
+export async function getUsers(): Promise<User[]> {
   return findAllUsers();
 }
 
-export async function getUser(
-  id: number
-): Promise<User | undefined> {
-
+export async function getUser(id: number): Promise<User | undefined> {
   return findUserById(id);
 }
 
-export async function addUser(
-  input: CreateUser
-): Promise<User> {
-
+export async function addUser(input: CreateUser): Promise<User> {
   return createUser(input);
 }
 
 export async function editUser(
   id: number,
-  input: UpdateUser
+  input: UpdateUser,
 ): Promise<User | undefined> {
-
   return updateUser(id, input);
 }
 
-export async function removeUser(
-  id: number
-): Promise<boolean> {
-
+export async function removeUser(id: number): Promise<boolean> {
   return deleteUser(id);
 }
 ```
@@ -1170,40 +1067,28 @@ src/users/user.route.ts
 ```
 
 ```typescript
-import type {
-  FastifyPluginAsyncZod
-} from "@fastify/type-provider-zod";
+import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
 
-import {
-  UserSchema
-} from "./user.schema.js";
+import { UserSchema } from "./user.schema.js";
 
-import {
-  getUsers
-} from "./user.service.js";
+import { getUsers } from "./user.service.js";
 
-export const userRoutes:
-  FastifyPluginAsyncZod =
-  async app => {
-
-    app.get(
-      "/users",
-      {
-        schema: {
-          response: {
-            200: UserSchema.array()
-          }
-        }
+export const userRoutes: FastifyPluginAsyncZod = async (app) => {
+  app.get(
+    "/users",
+    {
+      schema: {
+        response: {
+          200: UserSchema.array(),
+        },
       },
+    },
 
-      async () => {
-
-        return getUsers();
-
-      }
-    );
-
-  };
+    async () => {
+      return getUsers();
+    },
+  );
+};
 ```
 
 ---
@@ -1235,9 +1120,9 @@ User[]
   {
     id: 1,
     name: "Alice",
-    email: "alice@example.com"
-  }
-]
+    email: "alice@example.com",
+  },
+];
 ```
 
 の形でなければなりません。
@@ -1256,31 +1141,21 @@ import Fastify from "fastify";
 import {
   serializerCompiler,
   validatorCompiler,
-  type ZodTypeProvider
+  type ZodTypeProvider,
 } from "@fastify/type-provider-zod";
 
-import {
-  userRoutes
-} from "./users/user.route.js";
+import { userRoutes } from "./users/user.route.js";
 
 export function buildApp() {
-
   const app = Fastify({
-    logger: true
+    logger: true,
   });
 
-  app.setValidatorCompiler(
-    validatorCompiler
-  );
+  app.setValidatorCompiler(validatorCompiler);
 
-  app.setSerializerCompiler(
-    serializerCompiler
-  );
+  app.setSerializerCompiler(serializerCompiler);
 
-  const typedApp =
-    app.withTypeProvider<
-      ZodTypeProvider
-    >();
+  const typedApp = app.withTypeProvider<ZodTypeProvider>();
 
   typedApp.register(userRoutes);
 
@@ -1331,7 +1206,7 @@ GET /users/1
 
 ```typescript
 export const ErrorSchema = z.object({
-  message: z.string()
+  message: z.string(),
 });
 ```
 
@@ -1342,44 +1217,29 @@ app.get(
   "/users/:id",
   {
     schema: {
-
       params: UserParamsSchema,
 
       response: {
-
         200: UserSchema,
 
-        404: ErrorSchema
-
-      }
-
-    }
+        404: ErrorSchema,
+      },
+    },
   },
 
-  async (
-    request,
-    reply
-  ) => {
+  async (request, reply) => {
+    const { id } = request.params;
 
-    const {
-      id
-    } = request.params;
-
-    const user =
-      await getUser(id);
+    const user = await getUser(id);
 
     if (!user) {
-
-      return reply
-        .code(404)
-        .send({
-          message: "User not found"
-        });
-
+      return reply.code(404).send({
+        message: "User not found",
+      });
     }
 
     return user;
-  }
+  },
 );
 ```
 
@@ -1390,20 +1250,19 @@ app.get(
 ここで非常に重要です。
 
 ```typescript
-const { id } =
-  request.params;
+const { id } = request.params;
 ```
 
 こちらで、
 
 ```typescript
-request.params.id
+request.params.id;
 ```
 
 の型は自動的に、
 
 ```typescript
-number
+number;
 ```
 
 になります。
@@ -1421,7 +1280,7 @@ type Params = {
 なぜなら、
 
 ```typescript
-params: UserParamsSchema
+params: UserParamsSchema;
 ```
 
 からFastify Type Providerが推論しているからです。
@@ -1453,10 +1312,7 @@ curl http://localhost:3000/users/abc
 `abc`は、
 
 ```typescript
-z.coerce
-  .number()
-  .int()
-  .positive()
+z.coerce.number().int().positive();
 ```
 
 に違反します。
@@ -1476,37 +1332,26 @@ app.post(
   "/users",
   {
     schema: {
-
       body: CreateUserSchema,
 
       response: {
-        201: UserSchema
-      }
-
-    }
+        201: UserSchema,
+      },
+    },
   },
 
-  async (
-    request,
-    reply
-  ) => {
+  async (request, reply) => {
+    const user = await addUser(request.body);
 
-    const user =
-      await addUser(
-        request.body
-      );
-
-    return reply
-      .code(201)
-      .send(user);
-  }
+    return reply.code(201).send(user);
+  },
 );
 ```
 
 ここでも、
 
 ```typescript
-request.body
+request.body;
 ```
 
 の型は自動的に、
@@ -1575,10 +1420,9 @@ curl \
 Schemaでは、
 
 ```typescript
-name: z.string()
-  .min(1)
+name: z.string().min(1);
 
-email: z.email()
+email: z.email();
 ```
 
 なのでvalidation errorになります。
@@ -1604,53 +1448,31 @@ app.put(
   "/users/:id",
   {
     schema: {
+      params: UserParamsSchema,
 
-      params:
-        UserParamsSchema,
-
-      body:
-        UpdateUserSchema,
+      body: UpdateUserSchema,
 
       response: {
+        200: UserSchema,
 
-        200:
-          UserSchema,
-
-        404:
-          ErrorSchema
-
-      }
-
-    }
+        404: ErrorSchema,
+      },
+    },
   },
 
-  async (
-    request,
-    reply
-  ) => {
+  async (request, reply) => {
+    const { id } = request.params;
 
-    const { id } =
-      request.params;
-
-    const user =
-      await editUser(
-        id,
-        request.body
-      );
+    const user = await editUser(id, request.body);
 
     if (!user) {
-
-      return reply
-        .code(404)
-        .send({
-          message:
-            "User not found"
-        });
-
+      return reply.code(404).send({
+        message: "User not found",
+      });
     }
 
     return user;
-  }
+  },
 );
 ```
 
@@ -1703,48 +1525,27 @@ app.delete(
   "/users/:id",
   {
     schema: {
-
-      params:
-        UserParamsSchema,
+      params: UserParamsSchema,
 
       response: {
+        204: z.null(),
 
-        204:
-          z.null(),
-
-        404:
-          ErrorSchema
-
-      }
-
-    }
+        404: ErrorSchema,
+      },
+    },
   },
 
-  async (
-    request,
-    reply
-  ) => {
-
-    const deleted =
-      await removeUser(
-        request.params.id
-      );
+  async (request, reply) => {
+    const deleted = await removeUser(request.params.id);
 
     if (!deleted) {
-
-      return reply
-        .code(404)
-        .send({
-          message:
-            "User not found"
-        });
-
+      return reply.code(404).send({
+        message: "User not found",
+      });
     }
 
-    return reply
-      .code(204)
-      .send();
-  }
+    return reply.code(204).send();
+  },
 );
 ```
 
@@ -1763,16 +1564,14 @@ app.delete(
 ```typescript
 import { z } from "zod";
 
-import type {
-  FastifyPluginAsyncZod
-} from "@fastify/type-provider-zod";
+import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
 
 import {
   CreateUserSchema,
   ErrorSchema,
   UpdateUserSchema,
   UserParamsSchema,
-  UserSchema
+  UserSchema,
 } from "./user.schema.js";
 
 import {
@@ -1780,208 +1579,127 @@ import {
   editUser,
   getUser,
   getUsers,
-  removeUser
+  removeUser,
 } from "./user.service.js";
 
-export const userRoutes:
-  FastifyPluginAsyncZod =
-  async app => {
-
-    app.get(
-      "/users",
-      {
-        schema: {
-          response: {
-            200:
-              UserSchema.array()
-          }
-        }
+export const userRoutes: FastifyPluginAsyncZod = async (app) => {
+  app.get(
+    "/users",
+    {
+      schema: {
+        response: {
+          200: UserSchema.array(),
+        },
       },
+    },
 
-      async () => {
+    async () => {
+      return getUsers();
+    },
+  );
 
-        return getUsers();
+  app.get(
+    "/users/:id",
+    {
+      schema: {
+        params: UserParamsSchema,
 
-      }
-    );
+        response: {
+          200: UserSchema,
 
-    app.get(
-      "/users/:id",
-      {
-        schema: {
-
-          params:
-            UserParamsSchema,
-
-          response: {
-
-            200:
-              UserSchema,
-
-            404:
-              ErrorSchema
-
-          }
-
-        }
+          404: ErrorSchema,
+        },
       },
+    },
 
-      async (
-        request,
-        reply
-      ) => {
+    async (request, reply) => {
+      const user = await getUser(request.params.id);
 
-        const user =
-          await getUser(
-            request.params.id
-          );
-
-        if (!user) {
-
-          return reply
-            .code(404)
-            .send({
-              message:
-                "User not found"
-            });
-
-        }
-
-        return user;
+      if (!user) {
+        return reply.code(404).send({
+          message: "User not found",
+        });
       }
-    );
 
-    app.post(
-      "/users",
-      {
-        schema: {
+      return user;
+    },
+  );
 
-          body:
-            CreateUserSchema,
+  app.post(
+    "/users",
+    {
+      schema: {
+        body: CreateUserSchema,
 
-          response: {
-            201:
-              UserSchema
-          }
-
-        }
+        response: {
+          201: UserSchema,
+        },
       },
+    },
 
-      async (
-        request,
-        reply
-      ) => {
+    async (request, reply) => {
+      const user = await addUser(request.body);
 
-        const user =
-          await addUser(
-            request.body
-          );
+      return reply.code(201).send(user);
+    },
+  );
 
-        return reply
-          .code(201)
-          .send(user);
-      }
-    );
+  app.put(
+    "/users/:id",
+    {
+      schema: {
+        params: UserParamsSchema,
 
-    app.put(
-      "/users/:id",
-      {
-        schema: {
+        body: UpdateUserSchema,
 
-          params:
-            UserParamsSchema,
+        response: {
+          200: UserSchema,
 
-          body:
-            UpdateUserSchema,
-
-          response: {
-
-            200:
-              UserSchema,
-
-            404:
-              ErrorSchema
-
-          }
-
-        }
+          404: ErrorSchema,
+        },
       },
+    },
 
-      async (
-        request,
-        reply
-      ) => {
+    async (request, reply) => {
+      const user = await editUser(request.params.id, request.body);
 
-        const user =
-          await editUser(
-            request.params.id,
-            request.body
-          );
-
-        if (!user) {
-
-          return reply
-            .code(404)
-            .send({
-              message:
-                "User not found"
-            });
-
-        }
-
-        return user;
+      if (!user) {
+        return reply.code(404).send({
+          message: "User not found",
+        });
       }
-    );
 
-    app.delete(
-      "/users/:id",
-      {
-        schema: {
+      return user;
+    },
+  );
 
-          params:
-            UserParamsSchema,
+  app.delete(
+    "/users/:id",
+    {
+      schema: {
+        params: UserParamsSchema,
 
-          response: {
+        response: {
+          204: z.null(),
 
-            204:
-              z.null(),
-
-            404:
-              ErrorSchema
-
-          }
-
-        }
+          404: ErrorSchema,
+        },
       },
+    },
 
-      async (
-        request,
-        reply
-      ) => {
+    async (request, reply) => {
+      const deleted = await removeUser(request.params.id);
 
-        const deleted =
-          await removeUser(
-            request.params.id
-          );
-
-        if (!deleted) {
-
-          return reply
-            .code(404)
-            .send({
-              message:
-                "User not found"
-            });
-
-        }
-
-        return reply
-          .code(204)
-          .send();
+      if (!deleted) {
+        return reply.code(404).send({
+          message: "User not found",
+        });
       }
-    );
 
-  };
+      return reply.code(204).send();
+    },
+  );
+};
 ```
 
 ---
@@ -2109,7 +1827,7 @@ Zod Schema
 ただしZodでは、
 
 ```typescript
-z.infer<typeof Schema>
+z.infer<typeof Schema>;
 ```
 
 によって、
@@ -2150,7 +1868,7 @@ TypeScript
 例えば、
 
 ```typescript
-request.body
+request.body;
 ```
 
 に本当に、
@@ -2167,11 +1885,10 @@ request.body
 Zodなら、
 
 ```typescript
-const CreateUserSchema =
-  z.object({
-    name: z.string(),
-    email: z.email()
-  });
+const CreateUserSchema = z.object({
+  name: z.string(),
+  email: z.email(),
+});
 ```
 
 によって、
@@ -2220,7 +1937,7 @@ TypeScript domain
 一度Zodを通した後は、
 
 ```typescript
-CreateUser
+CreateUser;
 ```
 
 として安全に扱えます。
@@ -2234,7 +1951,7 @@ CreateUser
 HTTPから来た値は、
 
 ```typescript
-unknown
+unknown;
 ```
 
 だと考えるのが安全です。
@@ -2252,7 +1969,7 @@ CreateUser
 これは前回学習した、
 
 ```typescript
-unknown
+unknown;
 ```
 
 の実践的な用途でもあります。
@@ -2272,10 +1989,7 @@ const CreateUserSchema = ...
 ここから、
 
 ```typescript
-type CreateUser =
-  z.infer<
-    typeof CreateUserSchema
-  >;
+type CreateUser = z.infer<typeof CreateUserSchema>;
 ```
 
 を生成します。
@@ -2304,31 +2018,15 @@ Repositoryをinterface化してみます。
 
 ```typescript
 export interface UserRepository {
+  findAll(): Promise<User[]>;
 
-  findAll():
-    Promise<User[]>;
+  findById(id: number): Promise<User | undefined>;
 
-  findById(
-    id: number
-  ):
-    Promise<User | undefined>;
+  create(input: CreateUser): Promise<User>;
 
-  create(
-    input: CreateUser
-  ):
-    Promise<User>;
+  update(id: number, input: UpdateUser): Promise<User | undefined>;
 
-  update(
-    id: number,
-    input: UpdateUser
-  ):
-    Promise<User | undefined>;
-
-  delete(
-    id: number
-  ):
-    Promise<boolean>;
-
+  delete(id: number): Promise<boolean>;
 }
 ```
 
@@ -2358,44 +2056,29 @@ public interface IUserRepository
 # 48. classでRepositoryを実装する
 
 ```typescript
-export class InMemoryUserRepository
-  implements UserRepository {
-
+export class InMemoryUserRepository implements UserRepository {
   private users: User[] = [
     {
       id: 1,
       name: "Alice",
-      email:
-        "alice@example.com"
-    }
+      email: "alice@example.com",
+    },
   ];
 
   private nextId = 2;
 
-  async findAll():
-    Promise<User[]> {
-
+  async findAll(): Promise<User[]> {
     return this.users;
   }
 
-  async findById(
-    id: number
-  ):
-    Promise<User | undefined> {
-
-    return this.users.find(
-      user => user.id === id
-    );
+  async findById(id: number): Promise<User | undefined> {
+    return this.users.find((user) => user.id === id);
   }
 
-  async create(
-    input: CreateUser
-  ):
-    Promise<User> {
-
+  async create(input: CreateUser): Promise<User> {
     const user: User = {
       id: this.nextId++,
-      ...input
+      ...input,
     };
 
     this.users.push(user);
@@ -2403,50 +2086,29 @@ export class InMemoryUserRepository
     return user;
   }
 
-  async update(
-    id: number,
-    input: UpdateUser
-  ):
-    Promise<User | undefined> {
-
-    const user =
-      await this.findById(id);
+  async update(id: number, input: UpdateUser): Promise<User | undefined> {
+    const user = await this.findById(id);
 
     if (!user) {
       return undefined;
     }
 
-    Object.assign(
-      user,
-      input
-    );
+    Object.assign(user, input);
 
     return user;
   }
 
-  async delete(
-    id: number
-  ):
-    Promise<boolean> {
-
-    const index =
-      this.users.findIndex(
-        user =>
-          user.id === id
-      );
+  async delete(id: number): Promise<boolean> {
+    const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
       return false;
     }
 
-    this.users.splice(
-      index,
-      1
-    );
+    this.users.splice(index, 1);
 
     return true;
   }
-
 }
 ```
 
@@ -2458,28 +2120,15 @@ Serviceをclassにします。
 
 ```typescript
 export class UserService {
-
-  constructor(
-    private readonly repository:
-      UserRepository
-  ) {}
+  constructor(private readonly repository: UserRepository) {}
 
   async getUsers() {
-
-    return this.repository
-      .findAll();
-
+    return this.repository.findAll();
   }
 
-  async getUser(
-    id: number
-  ) {
-
-    return this.repository
-      .findById(id);
-
+  async getUser(id: number) {
+    return this.repository.findById(id);
   }
-
 }
 ```
 
@@ -2518,22 +2167,16 @@ classを使わなければならない
 TypeScriptでは、
 
 ```typescript
-function createUserService(
-  repository: UserRepository
-) {
-
+function createUserService(repository: UserRepository) {
   return {
-
     getUsers() {
       return repository.findAll();
     },
 
     getUser(id: number) {
       return repository.findById(id);
-    }
-
+    },
   };
-
 }
 ```
 
@@ -2576,12 +2219,9 @@ app
 さらに、
 
 ```typescript
-app.register(
-  userRoutes,
-  {
-    prefix: "/api"
-  }
-);
+app.register(userRoutes, {
+  prefix: "/api",
+});
 ```
 
 とすれば、
@@ -2595,24 +2235,21 @@ GET /api/users
 さらにRoute側を、
 
 ```typescript
-"/users"
+"/users";
 ```
 
 ではなく、
 
 ```typescript
-"/"
+"/";
 ```
 
 にして、
 
 ```typescript
-app.register(
-  userRoutes,
-  {
-    prefix: "/api/users"
-  }
-);
+app.register(userRoutes, {
+  prefix: "/api/users",
+});
 ```
 
 という設計もできます。
@@ -2624,12 +2261,9 @@ app.register(
 実務では、
 
 ```typescript
-app.register(
-  userRoutes,
-  {
-    prefix: "/api/v1/users"
-  }
-);
+app.register(userRoutes, {
+  prefix: "/api/v1/users",
+});
 ```
 
 として、
@@ -2667,20 +2301,10 @@ throw new UserNotFoundError(id);
 例えば、
 
 ```typescript
-export class UserNotFoundError
-  extends Error {
-
-  constructor(
-    public readonly userId:
-      number
-  ) {
-
-    super(
-      `User ${userId} not found`
-    );
-
+export class UserNotFoundError extends Error {
+  constructor(public readonly userId: number) {
+    super(`User ${userId} not found`);
   }
-
 }
 ```
 
@@ -2691,24 +2315,13 @@ export class UserNotFoundError
 Fastifyでは、
 
 ```typescript
-app.setErrorHandler(
-  async (
-    error,
-    request,
-    reply
-  ) => {
+app.setErrorHandler(async (error, request, reply) => {
+  request.log.error(error);
 
-    request.log.error(error);
-
-    return reply
-      .code(500)
-      .send({
-        message:
-          "Internal Server Error"
-      });
-
-  }
-);
+  return reply.code(500).send({
+    message: "Internal Server Error",
+  });
+});
 ```
 
 のようにGlobal Error Handlerを設定できます。
@@ -2732,7 +2345,7 @@ Unknown Error
 例えばServiceで、
 
 ```typescript
-reply.code(404)
+reply.code(404);
 ```
 
 を使うのは避けたほうがよいです。
@@ -2794,9 +2407,7 @@ PostgresUserRepository
 例えば、
 
 ```typescript
-class PostgresUserRepository
-  implements UserRepository {
-}
+class PostgresUserRepository implements UserRepository {}
 ```
 
 とします。
@@ -2834,7 +2445,7 @@ Drizzle
 Fastifyには、
 
 ```typescript
-app.inject()
+app.inject();
 ```
 
 という便利なテスト機能があります。
@@ -2842,11 +2453,10 @@ app.inject()
 例えば、
 
 ```typescript
-const response =
-  await app.inject({
-    method: "GET",
-    url: "/users"
-  });
+const response = await app.inject({
+  method: "GET",
+  url: "/users",
+});
 ```
 
 のように、
@@ -2858,45 +2468,24 @@ const response =
 # 60. テスト例
 
 ```typescript
-import {
-  describe,
-  it
-} from "node:test";
+import { describe, it } from "node:test";
 
-import assert
-  from "node:assert/strict";
+import assert from "node:assert/strict";
 
-import {
-  buildApp
-} from "./app.js";
+import { buildApp } from "./app.js";
 
-describe(
-  "GET /users",
-  () => {
+describe("GET /users", () => {
+  it("returns users", async () => {
+    const app = buildApp();
 
-    it(
-      "returns users",
-      async () => {
+    const response = await app.inject({
+      method: "GET",
+      url: "/users",
+    });
 
-        const app =
-          buildApp();
-
-        const response =
-          await app.inject({
-            method: "GET",
-            url: "/users"
-          });
-
-        assert.equal(
-          response.statusCode,
-          200
-        );
-
-      }
-    );
-
-  }
-);
+    assert.equal(response.statusCode, 200);
+  });
+});
 ```
 
 Node.js組み込みの、
@@ -2933,14 +2522,14 @@ Repository
 
 ```typescript
 schema: {
-  body: CreateUserSchema
+  body: CreateUserSchema;
 }
 ```
 
 を書くだけで、
 
 ```typescript
-request.body
+request.body;
 ```
 
 が、
@@ -2978,11 +2567,10 @@ json.NewDecoder(...)
 TypeScript + Zodでは、
 
 ```typescript
-const CreateUserSchema =
-  z.object({
-    name: z.string(),
-    email: z.email()
-  });
+const CreateUserSchema = z.object({
+  name: z.string(),
+  email: z.email(),
+});
 ```
 
 から、
@@ -3033,31 +2621,31 @@ Zod
 最初は次だけ覚えれば十分です。
 
 ```typescript
-app.get()
+app.get();
 ```
 
 Route。
 
 ```typescript
-request.params
+request.params;
 ```
 
 Path Parameter。
 
 ```typescript
-request.query
+request.query;
 ```
 
 Query Parameter。
 
 ```typescript
-request.body
+request.body;
 ```
 
 Request Body。
 
 ```typescript
-reply.code().send()
+reply.code().send();
 ```
 
 Response。
@@ -3067,15 +2655,15 @@ Response。
 # 65. まず覚えるべきZodの5要素
 
 ```typescript
-z.string()
+z.string();
 ```
 
 ```typescript
-z.number()
+z.number();
 ```
 
 ```typescript
-z.object()
+z.object();
 ```
 
 ```typescript
@@ -3083,7 +2671,7 @@ z.object()
 ```
 
 ```typescript
-z.infer<typeof Schema>
+z.infer<typeof Schema>;
 ```
 
 まずはここからで十分です。
